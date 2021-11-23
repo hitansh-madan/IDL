@@ -37,7 +37,7 @@ export default class CreateTemplate extends Component {
   handleFieldDelete = (field) => {
     var sections = { ...this.state.sections };
     delete sections[field];
-    console.log(sections);
+    // console.log(sections);
     this.setState({ sections: sections });
   };
 
@@ -86,52 +86,28 @@ export default class CreateTemplate extends Component {
     fieldObjArr.sort((a, b) => {
       return a.value._metadata.id > b.value._metadata.id;
     });
-    
+
     for (var fieldObj of fieldObjArr) {
+      var propsObj = {
+        key: fieldObj.value._metadata.id,
+        fieldObj: fieldObj.value,
+        fieldTitle: fieldObj.title,
+        handleFieldChange: this.handleFieldChange,
+        handleFieldDelete: this.handleFieldDelete,
+      };
+      console.log(propsObj);
       switch (fieldObj.value._metadata.type) {
         case "textarea":
-          fieldArr.push(
-            <TextField
-              key={fieldObj.value._metadata.id}
-              fieldObj={fieldObj.value}
-              fieldTitle={fieldObj.title}
-              handleFieldChange={this.handleFieldChange}
-              handleFieldDelete={this.handleFieldDelete}
-            />
-          );
+          fieldArr.push(<TextField {...propsObj} />);
           break;
         case "table":
-          fieldArr.push(
-            <TableField
-              key={fieldObj.value._metadata.id}
-              fieldObj={fieldObj.value}
-              fieldTitle={fieldObj.title}
-              handleFieldChange={this.handleFieldChange}
-              handleFieldDelete={this.handleFieldDelete}
-            />
-          );
+          fieldArr.push(<TableField {...propsObj} />);
           break;
         case "image":
-          fieldArr.push(
-            <ImageField
-              key={fieldObj.value._metadata.id}
-              fieldObj={fieldObj.value}
-              fieldTitle={fieldObj.title}
-              handleFieldChange={this.handleFieldChange}
-              handleFieldDelete={this.handleFieldDelete}
-            />
-          );
+          fieldArr.push(<ImageField {...propsObj} />);
           break;
         case "section":
-          fieldArr.push(
-            <SectionField
-              key={fieldObj.value._metadata.id}
-              fieldObj={fieldObj.value}
-              fieldTitle={fieldObj.title}
-              handleFieldChange={this.handleFieldChange}
-              handleFieldDelete={this.handleFieldDelete}
-            />
-          );
+          fieldArr.push(<SectionField {...propsObj} />);
           break;
       }
     }

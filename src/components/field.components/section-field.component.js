@@ -75,50 +75,25 @@ export default class SectionField extends Component {
     });
 
     for (var fieldObj of fieldObjArr) {
+      var propsObj = {
+        key: fieldObj.value._metadata.id,
+        fieldObj: fieldObj.value,
+        fieldTitle: fieldObj.title,
+        handleFieldChange: this.handleFieldChange,
+        handleFieldDelete: this.handleFieldDelete,
+      };
       switch (fieldObj.value._metadata.type) {
         case "textarea":
-          fieldArr.push(
-            <TextField
-              key={fieldObj.value._metadata.id}
-              fieldObj={fieldObj.value}
-              fieldTitle={fieldObj.title}
-              handleFieldChange={this.handleFieldChange}
-              handleFieldDelete={this.handleFieldDelete}
-            />
-          );
+          fieldArr.push(<TextField {...propsObj} />);
           break;
         case "table":
-          fieldArr.push(
-            <TableField
-              key={fieldObj.value._metadata.id}
-              fieldObj={fieldObj.value}
-              fieldTitle={fieldObj.title}
-              handleFieldChange={this.handleFieldChange}
-              handleFieldDelete={this.handleFieldDelete}
-            />
-          );
+          fieldArr.push(<TableField {...propsObj} />);
           break;
         case "image":
-          fieldArr.push(
-            <ImageField
-              key={fieldObj.value._metadata.id}
-              fieldObj={fieldObj.value}
-              fieldTitle={fieldObj.title}
-              handleFieldChange={this.handleFieldChange}
-              handleFieldDelete={this.handleFieldDelete}
-            />
-          );
+          fieldArr.push(<ImageField {...propsObj} />);
           break;
         case "section":
-          fieldArr.push(
-            <SectionField
-              key={fieldObj.value._metadata.id}
-              fieldObj={fieldObj.value}
-              fieldTitle={fieldObj.title}
-              handleFieldChange={this.handleFieldChange}
-              handleFieldDelete={this.handleFieldDelete}
-            />
-          );
+          fieldArr.push(<SectionField {...propsObj} />);
           break;
       }
     }
