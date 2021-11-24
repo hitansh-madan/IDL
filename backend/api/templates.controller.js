@@ -28,7 +28,7 @@ export default class TemplatesController {
   }
   static async apiDeleteTemplate(req, res, next) {
     try {
-      const productId = req.body.productId;
+      const productId = req.query.productId;
       const response = await TemplatesDAO.deleteTemplate(productId);
       res.json({ status: "success" });
     } catch (error) {

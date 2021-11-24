@@ -28,30 +28,31 @@ export default class TemplatesDAO {
   }
   static async createTemplate(productTemplate) {
     try {
-      return await templates.replaceMany(
+      return await templates.replaceOne(
         { productId: productTemplate.productId },
-        productTemplate
-        // { upsert: true }
+        productTemplate,
+        { upsert: true }
       );
     } catch (e) {
       console.log(`error in insert in DAO :${e}`);
       return { error: e };
     }
   }
-  static async updateTemplate(productTemplate) {
+  
+  // static async updateTemplate(productTemplate) {
+  //   try {
+  //     return await templates.updateOne(
+  //       { productId: productTemplate.productId },
+  //       productTemplate
+  //     );
+  //   } catch (e) {
+  //     console.log(`error in insert in DAO :${e}`);
+  //     return { error: e };
+  //   }
+  // }
+  static async deleteTemplate(productId) {
     try {
-      return await templates.updateOne(
-        { productId: productTemplate.productId },
-        productTemplate
-      );
-    } catch (e) {
-      console.log(`error in insert in DAO :${e}`);
-      return { error: e };
-    }
-  }
-  static async deleteTemplate(templateId) {
-    try {
-      return await templates.deleteOne({ productId : templateId });
+      return await templates.deleteOne({ productId: productId });
     } catch (e) {
       console.log(`error in insert in DAO :${e}`);
       return { error: e };
