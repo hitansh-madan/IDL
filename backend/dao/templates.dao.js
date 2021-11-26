@@ -26,6 +26,18 @@ export default class TemplatesDAO {
       return [];
     }
   }
+  
+  static async getTemplateById(id) {
+    let query;
+    try {
+      query = await templates.findOne({ productId: id });
+      return query;
+    } catch (e) {
+      console.log(`error in query in DAO :${e}`);
+      return [];
+    }
+  }
+
   static async createTemplate(productTemplate) {
     try {
       return await templates.replaceOne(

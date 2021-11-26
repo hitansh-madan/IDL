@@ -4,6 +4,7 @@ import TableField from "./field.components/table-field.component";
 import ImageField from "./field.components/image-field.component";
 import SectionField from "./field.components/section-field.component";
 import groupButton from "./field.components/field.util.components/group-button.component";
+import TemplateDataService from "../services/templates";
 
 export default class CreateTemplate extends Component {
   constructor(props) {
@@ -71,7 +72,9 @@ export default class CreateTemplate extends Component {
       category: this.state.productCategory,
       productLabel: this.state.sections,
     };
-    console.log(doc);
+    TemplateDataService.create(doc).then((response) => {
+      console.log(response);
+    });
   };
 
   render() {
@@ -95,7 +98,7 @@ export default class CreateTemplate extends Component {
         handleFieldChange: this.handleFieldChange,
         handleFieldDelete: this.handleFieldDelete,
       };
-      console.log(propsObj);
+
       switch (fieldObj.value._metadata.type) {
         case "textarea":
           fieldArr.push(<TextField {...propsObj} />);

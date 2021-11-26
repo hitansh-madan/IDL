@@ -8,31 +8,36 @@ export default class TemplatesController {
     };
     res.json(response);
   }
+  static async apiGetTemplateById(req, res, next) {
+    let id = req.params.id || {};
+    const template = await TemplatesDAO.getTemplateById(id);
+    res.json(template);
+  }
   static async apiCreateTemplate(req, res, next) {
     try {
-      const productTemplate = req.body.productTemplate;
+      const productTemplate = req.body;
       const response = await TemplatesDAO.createTemplate(productTemplate);
       res.json({ status: "success" });
     } catch (error) {
-        res.status(500).json({error : e.message})
+      res.status(500).json({ error: e.message });
     }
   }
   static async apiUpdateTemplate(req, res, next) {
     try {
-      const productTemplate = req.body.productTemplate;
+      const productTemplate = req.query.productTemplate;
       const response = await TemplatesDAO.updateTemplate(productTemplate);
       res.json({ status: "success" });
     } catch (error) {
-        res.status(500).json({error : e.message})
+      res.status(500).json({ error: e.message });
     }
   }
   static async apiDeleteTemplate(req, res, next) {
     try {
-      const productId = req.body.productId;
+      const productId = req.query.productId;
       const response = await TemplatesDAO.deleteTemplate(productId);
       res.json({ status: "success" });
     } catch (error) {
-        res.status(500).json({error : error.message})
+      res.status(500).json({ error: error.message });
     }
   }
 }

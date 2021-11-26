@@ -1,6 +1,10 @@
-# Getting Started with Create React App
+# IDL
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## API
+`GET /api/templates`
+`GET /api/templates/id/PRODUCT_ID`
+`DELETE /api/templates?productId=PRODUCT_ID`
+`POST /api/templates`
 
 ## Available Scripts
 
