@@ -1,21 +1,38 @@
 import React, { useEffect, useState } from "react";
 import TemplatesDataService from "../services/templates";
+import QRCode from "react-qr-code";
+import sha256 from "js-sha256";
 
 const Generate = (props) => {
   const [template, setTemplate] = useState({});
   const [productId, setProductId] = useState("");
   const [batchNo, setBatchNo] = useState("");
   const [generateState, setGenerateState] = useState(false);
+  const [qrData, setQrData] = useState({});
 
   useEffect(() => {
-    retrieveTemplate();
     setGenerateState(false);
   }, [productId]);
 
   const retrieveTemplate = () => {
     TemplatesDataService.get(productId).then((response) => {
-      setTemplate(response.data || {});
+      if (response.data) {
+        var qrData = {
+          productId: response.data.productId,
+          batchNo: batchNo,
+          time: Date.now(),
+          UUID: crypto.randomUUID() + "-" + Date.now(),
+        };
+        console.log(qrData);
+        setTemplate(response.data);
+        setQrData(JSON.stringify(qrData));
+      }
     });
+  };
+
+  const onGenerate = () => {
+    retrieveTemplate();
+    setGenerateState(true);
   };
 
   return (
@@ -38,11 +55,12 @@ const Generate = (props) => {
         />
       </form>
       <br />
-      <div className="btn btn-primary" onClick={() => setGenerateState(true)}>
+      <div className="btn btn-primary" onClick={onGenerate}>
         Generate
       </div>
       {generateState && (
         <div className="border w-50 m-auto p-5">
+          <QRCode value={qrData} />
           <GenerateLabel fieldObj={template.productLabel || {}} />
         </div>
       )}
@@ -52,6 +70,7 @@ const Generate = (props) => {
 };
 
 const GenerateLabel = (props) => {
+  console.log(props);
   var fieldObjArr = [],
     fieldArr = [];
   for (var fieldKey in props.fieldObj) {
@@ -82,9 +101,8 @@ const GenerateLabel = (props) => {
               return <Text {...propsObj} />;
             case "table":
               return <Table {...propsObj} />;
-            // case "image":
-            //   fieldArr.push(<Image {...propsObj} />);
-            //   break;
+            case "image":
+              return <Image {...propsObj} />;
             case "section":
               return <GenerateLabel {...propsObj} />;
           }
@@ -100,6 +118,16 @@ const Text = (props) => {
     <div>
       <h5>{props.fieldTitle}</h5>
       <p>{props.fieldObj.data}</p>
+    </div>
+  );
+};
+
+const Image = (props) => {
+  console.log(props);
+  return (
+    <div>
+      <h5>{props.fieldTitle}</h5>
+      <img className="w-100" src={props.fieldObj.data}></img>
     </div>
   );
 };
