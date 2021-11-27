@@ -2,9 +2,16 @@
 
 ## API
 `GET /api/templates`
+
 `GET /api/templates/id/PRODUCT_ID`
+
 `DELETE /api/templates?productId=PRODUCT_ID`
+
 `POST /api/templates`
+
+## URLs
+
+`http://localhost:3000/label?id=PRODUCT_ID` return a single page with full label (for app)
 
 ## Available Scripts
 
