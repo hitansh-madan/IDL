@@ -3,6 +3,7 @@ import TextField from "./fields/text.field";
 import TableField from "./fields/table.field";
 import SectionField from "./fields/section.field";
 import ImageField from "./fields/image.field";
+import TempleteService from "../services/templete";
 export default class CreateTemplate extends Component {
   constructor(props) {
     super(props);
@@ -70,6 +71,11 @@ export default class CreateTemplate extends Component {
       productLabel: this.state.sections,
     };
     console.log(doc);
+    TempleteService.create(doc).then((response) => {
+      console.log(response.data.templete);
+    }).catch((error) => {
+      console.log(error);
+  });
   };
 
   render() {
