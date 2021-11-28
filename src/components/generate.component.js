@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import TemplatesDataService from "../services/templates";
 import QRCode from "react-qr-code";
-import sha256 from "js-sha256";
+import { createBatch } from "../services/blockchain_interact";
 
 const Generate = (props) => {
   const [template, setTemplate] = useState({});
@@ -24,9 +24,10 @@ const Generate = (props) => {
           UUID: crypto.randomUUID() + "-" + Date.now(),
         };
         console.log(qrData);
+        createBatch(qrData.UUID);
         setTemplate(response.data);
         setQrData(JSON.stringify(qrData));
-      }
+      } else setTemplate({});
     });
   };
 
@@ -86,7 +87,7 @@ const GenerateLabel = (props) => {
   return (
     <div>
       {props.fieldTitle && <h5>{props.fieldTitle}</h5>}
-      <div className = "ps-3">
+      <div className="ps-3">
         {fieldObjArr.map((fieldObj) => {
           var propsObj = {
             key: fieldObj.value._metadata.id,
