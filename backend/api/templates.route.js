@@ -2,6 +2,8 @@ import express from "express";
 import TemplatesCtrl from "./templates.controller.js";
 const router = express.Router();
 router.route("/").get(TemplatesCtrl.apiGetTemplates);
+router.route("/id/:id").get(TemplatesCtrl.apiGetTemplateById);
+
 router
   .route("/")
   .post(TemplatesCtrl.apiCreateTemplate)

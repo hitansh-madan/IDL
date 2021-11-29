@@ -1,78 +1,28 @@
 import React, { useEffect, useState } from "react";
 import TemplatesDataService from "../services/templates";
-import QRCode from "react-qr-code";
-import sha256 from "js-sha256";
 
 const Generate = (props) => {
-  const [template, setTemplate] = useState({});
-  const [productId, setProductId] = useState("");
-  const [batchNo, setBatchNo] = useState("");
-  const [generateState, setGenerateState] = useState(false);
-  const [qrData, setQrData] = useState({});
-
+  const [template,setTemplate] = useState({});
   useEffect(() => {
-    setGenerateState(false);
-  }, [productId]);
+    retrieveTemplate();
+  }, []);
 
-  
   const retrieveTemplate = () => {
+    var productId = new URLSearchParams(props.location.search).get("id");
     TemplatesDataService.get(productId).then((response) => {
-      if (response.data) {
-        var qrData = {
-          productId: response.data.productId,
-          batchNo: batchNo,
-          time: Date.now(),
-          UUID: crypto.randomUUID() + "-" + Date.now(),
-        };
-        console.log(qrData);
-        setTemplate(response.data);
-        setQrData(JSON.stringify(qrData));
-      }
+      setTemplate(response.data || {});
     });
   };
 
-
-  const onGenerate = () => {
-    retrieveTemplate();
-    setGenerateState(true);
-  };
-
   return (
-    <div className="my-5">
-      <h2 className=" my-4 ">Generate Label</h2>
-      <form>
-        <label>Product ID:</label>
-        <input
-          type="text"
-          className="form-control"
-          value={productId}
-          onChange={(e) => setProductId(e.target.value)}
-        />
-        <label>Batch Number:</label>
-        <input
-          type="text"
-          className="form-control"
-          value={batchNo}
-          onChange={(e) => setBatchNo(e.target.value)}
-        />
-      </form>
-      <br />
-      <div className="btn btn-primary" onClick={onGenerate}>
-        Generate
-      </div>
-      {generateState && (
-        <div className="border w-50 m-auto p-5">
-          <QRCode value={qrData} />
-          <GenerateLabel fieldObj={template.productLabel || {}} />
-        </div>
-      )}
-      {/* <p>{generateState && JSON.stringify(template)}</p> */}
+    <div className="my-5 mx-2">
+      <GenerateLabel fieldObj={template.productLabel || {}} />
     </div>
   );
 };
 
 const GenerateLabel = (props) => {
-  console.log(props);
+    console.log(props.fieldObj);
   var fieldObjArr = [],
     fieldArr = [];
   for (var fieldKey in props.fieldObj) {
@@ -81,14 +31,13 @@ const GenerateLabel = (props) => {
     fieldObjArr.push({ title: fieldKey, value: value });
   }
   fieldObjArr.sort((a, b) => {
+    console.log(a);
     return a.value._metadata.id > b.value._metadata.id;
   });
-  console.log(fieldObjArr);
-  // return <div/>
   return (
     <div>
       {props.fieldTitle && <h5>{props.fieldTitle}</h5>}
-      <div className = "ps-3">
+      <div className="ps-3">
         {fieldObjArr.map((fieldObj) => {
           var propsObj = {
             key: fieldObj.value._metadata.id,
@@ -96,7 +45,6 @@ const GenerateLabel = (props) => {
             fieldTitle: fieldObj.title,
           };
 
-          // console.log()
 
           switch (fieldObj.value._metadata.type) {
             case "textarea":
@@ -115,7 +63,6 @@ const GenerateLabel = (props) => {
 };
 
 const Text = (props) => {
-  console.log(props);
   return (
     <div>
       <h5>{props.fieldTitle}</h5>
@@ -125,7 +72,6 @@ const Text = (props) => {
 };
 
 const Image = (props) => {
-  console.log(props);
   return (
     <div>
       <h5>{props.fieldTitle}</h5>
@@ -135,8 +81,6 @@ const Image = (props) => {
 };
 
 const Table = (props) => {
-  console.log(props.fieldObj.data[0]);
-
   var keys = [];
   for (var key in props.fieldObj.data[0]) keys.push(key);
   return (

@@ -1,45 +1,40 @@
 import React, { Component } from "react";
-import TextField from "./field.components/text-field.component";
-import TableField from "./field.components/table-field.component";
-import ImageField from "./field.components/image-field.component";
-import SectionField from "./field.components/section-field.component";
-import groupButton from "./field.components/field.util.components/group-button.component";
-import TemplateDataService from "../services/templates";
-
-export default class CreateTemplate extends Component {
+import TextField from "./text-field.component";
+import TableField from "./table-field.component";
+import ImageField from "./image-field.component";
+import groupButton from "./field.util.components/group-button.component";
+export default class SectionField extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      productId: "",
-      productName: "",
-      productCategory: "",
       addFieldType: "",
       addFieldTitle: "",
       fieldCount: 0,
       displayAddField: false,
-      sections: {
-        _metadata: {
-          type: "section",
-          id: 0,
-        },
-      },
+      sections: this.props.fieldObj,
     };
   }
 
   handleFieldChange = (field, value) => {
-    this.setState((prevState) => ({
-      sections: {
-        ...prevState.sections,
-        [field]: value,
-      },
-    }));
+    this.setState(
+      (prevState) => ({
+        ...prevState,
+        sections: {
+          ...prevState.sections,
+          [field]: value,
+        },
+      }),
+      () =>
+        this.props.handleFieldChange(this.props.fieldTitle, this.state.sections)
+    );
   };
 
   handleFieldDelete = (field) => {
     var sections = { ...this.state.sections };
     delete sections[field];
-    // console.log(sections);
-    this.setState({ sections: sections });
+    this.setState({ sections: sections }, () =>
+      this.props.handleFieldChange(this.props.fieldTitle, this.state.sections)
+    );
   };
 
   handleAddClick = (fieldtype) => {
@@ -65,18 +60,7 @@ export default class CreateTemplate extends Component {
     });
   };
 
-  handleSubmit = () => {
-    var doc = {
-      productId: this.state.productId,
-      name: this.state.productName,
-      category: this.state.productCategory,
-      productLabel: this.state.sections,
-    };
-    TemplateDataService.create(doc).then((response) => {
-      console.log(response);
-    });
-  };
-
+  // TODO: sort the fields based on their metadata ids in the render method
   render() {
     var fieldObjArr = [],
       fieldArr = [];
@@ -98,7 +82,6 @@ export default class CreateTemplate extends Component {
         handleFieldChange: this.handleFieldChange,
         handleFieldDelete: this.handleFieldDelete,
       };
-
       switch (fieldObj.value._metadata.type) {
         case "textarea":
           fieldArr.push(<TextField {...propsObj} />);
@@ -114,28 +97,19 @@ export default class CreateTemplate extends Component {
           break;
       }
     }
-    // console.log(this.state);
 
     return (
-      <form>
-        <label>Product ID:</label>
-        <input
-          type="text"
-          className="form-control"
-          onChange={(e) => this.setState({ productId: e.target.value })}
-        />
-        <label>Product Name:</label>
-        <input
-          type="text"
-          className="form-control"
-          onChange={(e) => this.setState({ productName: e.target.value })}
-        />
-        <label>Product Category:</label>
-        <input
-          type="text"
-          className="form-control"
-          onChange={(e) => this.setState({ productCategory: e.target.value })}
-        />
+      <div className="border ps-4">
+        <label className="m-2">
+          <strong>{this.props.fieldTitle + " :"}</strong>
+        </label>
+        <p
+          type="button"
+          className="d-inline-block float-end m-2"
+          onClick={() => this.props.handleFieldDelete(this.props.fieldTitle)}
+        >
+          ❌
+        </p>
 
         {fieldArr}
 
@@ -164,14 +138,7 @@ export default class CreateTemplate extends Component {
             </button>
           </div>
         )}
-
-        <input
-          type="button"
-          value="Submit"
-          className="btn btn-primary my-2 d-block"
-          onClick={this.handleSubmit}
-        />
-      </form>
+      </div>
     );
   }
 }

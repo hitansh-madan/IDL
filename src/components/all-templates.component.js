@@ -1,5 +1,5 @@
 import React, { Component, useEffect } from "react";
-import TempleteService from "../services/templete";
+import TempleteService from  "..//services/templates";
 import { Link } from "react-router-dom";
 const TemplatesList = props => {
     const [templates, setTemplates] = React.useState([]);

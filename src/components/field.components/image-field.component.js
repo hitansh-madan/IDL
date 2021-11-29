@@ -1,7 +1,8 @@
+import React, { Component } from "react";
 import { getDownloadURL, ref, uploadBytesResumable } from "@firebase/storage";
-import { Component } from "react";
 import { storage } from "../../firebase";
-class ImageField extends Component {
+
+export default class ImageField extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -9,28 +10,38 @@ class ImageField extends Component {
       data: this.props.fieldObj.data ? this.props.fieldObj.data : "",
     };
   }
+
+  handleChange = (url) => {
+    this.setState({ data: url }, () => {
+      this.props.handleFieldChange(this.props.fieldTitle, this.state);
+    });
+  };
+
   formHandler = (e) => {
     e.preventDefault();
     const file = e.target.files[0];
     console.log(file);
     this.uploadFiles(file);
   };
+
   uploadFiles = (file) => {
     if (!file) return;
-    const storageRef = ref(storage, '/files/' + file.name);
+    const storageRef = ref(storage, "/files/" + file.name);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
-    uploadTask.on("state_changed", (snapshot) => {
-    }
-      , (error) => {
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {},
+      (error) => {
         console.log(error);
-      }
-      , () => {
+      },
+      () => {
         getDownloadURL(uploadTask.snapshot.ref).then((url) => {
           console.log(url);
-          this.setState({ data: url });
+          this.handleChange(url);
         });
-      });
+      }
+    );
   };
 
   render() {
@@ -49,17 +60,11 @@ class ImageField extends Component {
         <div>
           <input
             type="file"
-            className="input"
-            value={this.state.data}
+            className="form-control"
             onChange={this.formHandler}
           />
-        </div>
-        <div>
-          <button>submit</button>
         </div>
       </div>
     );
   }
 }
-
-export default ImageField;

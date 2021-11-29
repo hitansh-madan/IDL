@@ -10,8 +10,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-
 app.use("/api/templates", templates);
 app.use("*", (req, res) => res.status(404).json({ error: "not found" }));
 
@@ -19,7 +17,6 @@ export default app;
 
 // const uri = process.env.ATLAS_URI;
 // mongoose.connect(uri);
-
 // const connection = mongoose.connection;
 // connection.once('open', ()=> {
 //     console.log("MongoDB Connected");

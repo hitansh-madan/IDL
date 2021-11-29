@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:idl/services/template_service.dart';
+import 'package:idl/showlabel.dart';
+import 'package:intl/intl.dart';
 
 class PrintData extends StatefulWidget {
   PrintData({required this.data});
@@ -9,46 +14,191 @@ class PrintData extends StatefulWidget {
 }
 
 TemplateService templateService = TemplateService();
+String readTimestamp(int timestamp) {
+  var now = new DateTime.now();
+  var format = new DateFormat('HH:mm a');
+  var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp);
+  return format.format(date);
+  // var diff = date.difference(now);
+  // var time = '';
+
+  // if (diff.inSeconds <= 0 ||
+  //     diff.inSeconds > 0 && diff.inMinutes == 0 ||
+  //     diff.inMinutes > 0 && diff.inHours == 0 ||
+  //     diff.inHours > 0 && diff.inDays == 0) {
+  //   time = format.format(date);
+  // } else {
+  //   if (diff.inDays == 1) {
+  //     time = diff.inDays.toString() + 'DAY AGO';
+  //   } else {
+  //     time = diff.inDays.toString() + 'DAYS AGO';
+  //   }
+  // }
+
+  // return time;
+}
 
 class _PrintDataState extends State<PrintData> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Product Detail'),
+        backgroundColor: HexColor('#00008B'),
+        title: Text(
+          'Product Detail',
+          style: TextStyle(color: Colors.white),
+        ),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: templateService.getTemplates(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
+            var value = jsonDecode(widget.data);
+            print(value);
+            //print(snapshot.data);
             int val = -1;
+            // print("data=="+widget.data);
             for (int i = 0; i < snapshot.data!['templates'].length; i++) {
-              if (snapshot.data!['templates'][i]['productId'] == widget.data) {
+              //print(snapshot.data!['templates'][i]['productId']);
+
+              if (snapshot.data!['templates'][i]['productId'] ==
+                  value['productId']) {
+                // print(snapshot.data!['templates'][i]['productId']);
                 val = i;
                 break;
               }
             }
+            if (val == -1) {
+              print(val);
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text('No template found for this product'),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      width: MediaQuery.of(context).size.width * 0.44,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              HexColor('#00008B')),
+                          elevation: MaterialStateProperty.all(2),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18.0),
+                            ),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          'Back',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    )
+                    // RaisedButton(
+                    //   child: Text('Back'),
+                    //   onPressed: () {
+                    //     Navigator.pop(context);
+                    //   },
+                    // )
+                  ],
+                ),
+              );
+            }
+            int time = int.tryParse(value['time'].toString()) ?? 0;
+            String formatted = readTimestamp(time);
+            print(formatted);
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.4,
+                    height: MediaQuery.of(context).size.height * 0.3,
                     width: MediaQuery.of(context).size.width,
                     child: Card(
-                      child: Column(
-                        children: [
-                          Row(children: [
-                            Expanded(
-                                child: Text('Product ID: ' +
-                                    snapshot.data!['templates'][val]['productId'].toString())),
-                          ]),
-                          Row(children: [
-                            Expanded(
-                                child: Text('Product Name: ' + snapshot.data!['templates'][val]['name'].toString()))
-                          ])
-                        ],
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Row(children: [
+                              Expanded(
+                                child: Text(
+                                  'Product ID: ' +
+                                      snapshot.data!['templates'][val]
+                                              ['productId']
+                                          .toString(),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                              ),
+                            ]),
+                            Row(children: [
+                              Expanded(
+                                child: Text(
+                                  'Product Name: ' +
+                                      snapshot.data!['templates'][val]['name']
+                                          .toString(),
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                              )
+                            ]),
+                            Row(children: [
+                              Expanded(
+                                  child: Text(
+                                'Product Category: ' +
+                                    snapshot.data!['templates'][val]['category']
+                                        .toString(),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade700,
+                                ),
+                              ))
+                            ]),
+                            Row(children: [
+                              Expanded(
+                                  child: Text(
+                                'Batch Number: ' + value['batchNo'].toString(),
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade700,
+                                ),
+                              )),
+                            ]),
+                            Row(children: [
+                              Expanded(
+                                  child: Text(
+                                'Manufacturing Date: ' + formatted,
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey.shade700,
+                                ),
+                              )),
+                            ]),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -64,8 +214,8 @@ class _PrintDataState extends State<PrintData> {
                         child: ElevatedButton(
                             style: ButtonStyle(
                               backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.green),
-                              elevation: MaterialStateProperty.all(0),
+                                  HexColor('#00008B')),
+                              elevation: MaterialStateProperty.all(2),
                               shape: MaterialStateProperty.all<
                                   RoundedRectangleBorder>(
                                 RoundedRectangleBorder(
@@ -73,7 +223,16 @@ class _PrintDataState extends State<PrintData> {
                                 ),
                               ),
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ShowLabel(
+                                    data: value['productId'].toString(),
+                                  ),
+                                ),
+                              );
+                            },
                             child: const Text(
                               ' Detail',
                               style: TextStyle(

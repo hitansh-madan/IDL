@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import { BrowserRouter as Router , Link, Route} from "react-router-dom";
 
 import CreateTemplate from "./create-template.component";
-import TemplatesList from "./all-templates.component";
+import AllTemplates from "./all-templates.component";
 export default class Templates extends Component {
 
     render(){
@@ -15,7 +15,7 @@ export default class Templates extends Component {
 
             <Route path = '/templates/' exact component = {CreateTemplate} /> 
             <Route path = '/templates/create-template' component = {CreateTemplate} />
-            <Route path = '/templates/all-templates' component = {TemplatesList} />
+            <Route path = '/templates/all-templates' component = {AllTemplates} />
 
             </Router>
         )

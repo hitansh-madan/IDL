@@ -1,8 +1,11 @@
 // ignore_for_file: file_names
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
+import 'package:hexcolor/hexcolor.dart';
 import 'package:idl/data.dart';
 
 
@@ -23,11 +26,14 @@ String scannedQrcode = '';
       scannedQrcode = await FlutterBarcodeScanner.scanBarcode(
           '#ff6666', 'cancel', true, ScanMode.QR);
       if (scannedQrcode.isNotEmpty) {
+        // var data = jsonDecode(scannedQrcode);
+        // print(data);
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => PrintData(
               data: scannedQrcode,
+
             ),
           ),
         );
@@ -43,7 +49,8 @@ String scannedQrcode = '';
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        backgroundColor: HexColor('#00008B'),
+        title: Text(widget.title, style: TextStyle(color: Colors.white),),
       ),
       body: Center(
         child: Column(
@@ -55,7 +62,7 @@ String scannedQrcode = '';
               child: ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor:
-                      MaterialStateProperty.all<Color>(Colors.yellow),
+                      MaterialStateProperty.all<Color>(HexColor('#00008B')),
                   elevation: MaterialStateProperty.all(2),
                   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
@@ -69,7 +76,7 @@ String scannedQrcode = '';
                 child: const Text(
                   'Scan QR',
                   style: TextStyle(
-                      color: Colors.black,
+                      color: Colors.white,
                       fontSize: 20,
                       fontWeight: FontWeight.w600),
                 ),
