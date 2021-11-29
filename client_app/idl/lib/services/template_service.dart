@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 class TemplateService {
   // add server url
   String baseUrl = "http://192.168.0.108:5000/api/templates";
-
+  
   Future<Map<String,dynamic>> getTemplates() async {
     try {
       var response = await http.get(Uri.parse(baseUrl));

@@ -14,30 +14,6 @@ class PrintData extends StatefulWidget {
 }
 
 TemplateService templateService = TemplateService();
-String readTimestamp(int timestamp) {
-  var now = new DateTime.now();
-  var format = new DateFormat('HH:mm a');
-  var date = new DateTime.fromMicrosecondsSinceEpoch(timestamp);
-  return format.format(date);
-  // var diff = date.difference(now);
-  // var time = '';
-
-  // if (diff.inSeconds <= 0 ||
-  //     diff.inSeconds > 0 && diff.inMinutes == 0 ||
-  //     diff.inMinutes > 0 && diff.inHours == 0 ||
-  //     diff.inHours > 0 && diff.inDays == 0) {
-  //   time = format.format(date);
-  // } else {
-  //   if (diff.inDays == 1) {
-  //     time = diff.inDays.toString() + 'DAY AGO';
-  //   } else {
-  //     time = diff.inDays.toString() + 'DAYS AGO';
-  //   }
-  // }
-
-  // return time;
-}
-
 class _PrintDataState extends State<PrintData> {
   @override
   Widget build(BuildContext context) {
@@ -115,8 +91,13 @@ class _PrintDataState extends State<PrintData> {
                 ),
               );
             }
-            int time = int.tryParse(value['time'].toString()) ?? 0;
-            String formatted = readTimestamp(time);
+            String t = value['time'].toString();
+            int time = int.tryParse(t) ?? 0;
+            print("time=" + value['time'].toString());
+            print(time);
+            String formatted = new DateTime.fromMicrosecondsSinceEpoch(time*1000)
+                .toString()
+                .substring(0, 19);
             print(formatted);
             return Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -279,7 +260,9 @@ class _PrintDataState extends State<PrintData> {
             );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: HexColor('#00008B'),
+              ),
             );
           }
         },
