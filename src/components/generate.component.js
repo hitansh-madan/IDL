@@ -3,6 +3,7 @@ import TemplatesDataService from "../services/templates";
 import QRCode from "react-qr-code";
 import { createBatch } from "../services/blockchain_interact";
 
+
 const Generate = (props) => {
   const [template, setTemplate] = useState({});
   const [productId, setProductId] = useState("");
